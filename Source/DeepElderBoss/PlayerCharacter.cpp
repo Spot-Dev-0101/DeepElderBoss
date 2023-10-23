@@ -1,0 +1,228 @@
+// Fill out your copyright notice in the Description page of Project Settings.
+
+
+#include "PlayerCharacter.h"
+
+#define print(text) if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 1.5, FColor::Blue,text)
+#define printFString(text, fstring) if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Blue, FString::Printf(TEXT(text), fstring))
+
+// Sets default values
+APlayerCharacter::APlayerCharacter()
+{
+ 	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
+	PrimaryActorTick.bCanEverTick = true;
+
+	cam = CreateDefaultSubobject<UCameraComponent>(TEXT("Camera"));
+
+	//Create Camera arm
+	arm = CreateDefaultSubobject<USpringArmComponent>(TEXT("SpringArm"));
+
+	//Create Axis point for the camera are to enable horizontal movement
+	armAxisPoint = CreateDefaultSubobject<USceneComponent>(TEXT("SpringAxisPoint"));
+
+	armAxisPoint->AttachToComponent(RootComponent, FAttachmentTransformRules::SnapToTargetNotIncludingScale);
+
+	
+
+	arm->AttachToComponent(armAxisPoint, FAttachmentTransformRules::SnapToTargetNotIncludingScale);
+	arm->TargetArmLength = 300.f;
+
+	arm->bEnableCameraLag = true;
+	arm->CameraLagSpeed = 8.0f;
+
+	arm->SetRelativeLocation(FVector(0, 0, 75));
+
+	cam->AttachToComponent(arm, FAttachmentTransformRules::SnapToTargetNotIncludingScale, USpringArmComponent::SocketName);
+
+}
+
+
+// Called to bind functionality to input
+void APlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
+{
+	Super::SetupPlayerInputComponent(PlayerInputComponent);
+
+	PlayerInputComponent->BindAxis(TEXT("MouseX"), this, &APlayerCharacter::MouseX);
+	PlayerInputComponent->BindAxis(TEXT("MouseY"), this, &APlayerCharacter::MouseY);
+
+	PlayerInputComponent->BindAxis(TEXT("Move_Forward"), this, &APlayerCharacter::MoveForward);
+	//PlayerInputComponent->BindAxis(TEXT("Move_Backward"), this, &APlayerCharacter::MoveForward);
+	//PlayerInputComponent->BindAxis(TEXT("Move_Left"), this, &APlayerCharacter::MoveRight);
+	PlayerInputComponent->BindAxis(TEXT("Move_Right"), this, &APlayerCharacter::MoveRight);
+
+	PlayerInputComponent->BindAction(TEXT("MouseAttack"), EInputEvent::IE_Pressed, this, &APlayerCharacter::MouseAttack);
+	PlayerInputComponent->BindAction(TEXT("MouseRightAttack"), EInputEvent::IE_Pressed, this, &APlayerCharacter::MouseRightAttack);
+
+}
+
+// Called when the game starts or when spawned
+void APlayerCharacter::BeginPlay()
+{
+	Super::BeginPlay();
+
+	print("Start");
+
+	PlayerAnim = (UPlayerAnimInstance*)GetMesh()->GetAnimInstance();
+	
+}
+
+// Called every frame
+void APlayerCharacter::Tick(float DeltaTime)
+{
+	Super::Tick(DeltaTime);
+
+	Move();
+	MoveCamera();
+
+	//PlayerAnim->Velocity = GetVelocity();
+
+	AttackTimer -= DeltaTime;
+
+	if (AttackTimer > 0) {
+		if (LeftAttack == true) {
+			PlayerAnim->Attack = true;
+		}
+		if (RightAttack == true) {
+			PlayerAnim->RightAttack = true;
+		}
+	}
+	else {
+		if (LeftAttack == true) {
+			PlayerAnim->Attack = false;
+			LeftAttack = false;
+		}
+		if (RightAttack == true) {
+			PlayerAnim->RightAttack = false;
+			RightAttack = false;
+		}
+	}
+
+	if (PlayerAnim->PerformedAttack == true) {
+		print("Perform Attack");
+		PlayerAnim->PerformedAttack = false;
+	}
+
+	if (PlayerAnim->PerformedRightAttack == true) {
+		print("Perform Right Attack");
+		PlayerAnim->PerformedRightAttack = false;
+	}
+
+}
+
+void APlayerCharacter::Move()
+{
+
+	FVector ForwardMoveDirection = FRotationMatrix(armAxisPoint->GetComponentRotation()).GetScaledAxis(EAxis::X);
+	FVector RightMoveDirection = FRotationMatrix(armAxisPoint->GetComponentRotation()).GetScaledAxis(EAxis::Y);
+
+	FVector CurrentVelocity = GetVelocity();
+	CurrentVelocity.Normalize();
+	
+
+	FVector NewAnimValue = FVector(((MouseXValue / 4) * 100), GetVelocity().Length() * ForwardValue, 0);
+
+	
+
+
+	if (RightValue == 1) {
+		NewAnimValue.X = 150;
+	} else if (RightValue == -1) {
+		NewAnimValue.X = -150;
+	}
+
+	PlayerAnim->Velocity = FMath::Lerp(PlayerAnim->Velocity, NewAnimValue, 0.1);
+
+
+	//print(PlayerAnim->Velocity.ToString());
+
+	AddMovementInput(ForwardMoveDirection, ForwardValue * 1);
+	AddMovementInput(RightMoveDirection, RightValue * 1);
+
+	FVector MovingDir = ((LastLocation - GetActorLocation()));
+
+	if (MovingDir.Length() == 0) {
+		MovingDir = LastMovingDir;
+	}
+
+	FRotator MovingRotation = UKismetMathLibrary::FindLookAtRotation(GetActorLocation(), (-(MovingDir * 25) + GetActorLocation()));
+
+	FRotator FacingAndMovingRotationDiff = MovingRotation - LastFacingRotation;
+	FQuat FacingRotationQuat = FQuat::Slerp(FQuat(LastFacingRotation), FQuat(MovingRotation), 0.1);
+	FRotator FacingRotation = FacingRotationQuat.Rotator();
+	FRotator NewFacingRotator = FRotator(0, FacingRotation.Yaw - 90, 0);
+
+	//GetMesh()->SetWorldRotation(NewFacingRotator);
+	FRotator NewRotation = (-RightMoveDirection).Rotation();
+	FRotator NewRotationLerped = FMath::Lerp(GetMesh()->GetComponentRotation(), NewRotation, 0.1);
+	GetMesh()->SetWorldRotation(NewRotationLerped);
+
+	LastLocation = GetActorLocation();
+	LastFacingRotation = FacingRotation;
+	LastMovingDir = MovingDir;
+
+	
+
+
+}
+
+void APlayerCharacter::MouseAttack()
+{
+	print("Attack Left");
+	if (AttackTimer <= 0) {
+		LeftAttack = true;
+	}
+	AttackTimer = AttackCooldown;
+}
+
+void APlayerCharacter::MouseRightAttack()
+{
+	print("Attack Right");
+	if (AttackTimer <= 0) {
+		RightAttack = true;
+	}
+	AttackTimer = AttackCooldown;
+}
+
+
+void APlayerCharacter::MoveCamera()
+{
+
+	float tempY = arm->GetRelativeRotation().Pitch + MouseYValue;
+	if (tempY < 25 && tempY > -85) {
+		arm->AddLocalRotation(FRotator(MouseYValue, 0, 0));
+		
+	}
+
+	//Rotate the arm axis
+	float tempX = armAxisPoint->GetRelativeRotation().Yaw + MouseXValue;
+	armAxisPoint->AddLocalRotation(FRotator(0, MouseXValue, 0));
+	//AddActorWorldRotation(FRotator(0, MouseXValue, 0));
+
+}
+
+void APlayerCharacter::MouseX(float Value) {
+	MouseXValue = Value;
+	//print("Y: " + FString::SanitizeFloat(Value));
+}
+
+void APlayerCharacter::MouseY(float Value)
+{
+	MouseYValue = Value;
+	//print("Y: " + FString::SanitizeFloat(Value));
+}
+
+void APlayerCharacter::MoveForward(float Value)
+{
+	ForwardValue = Value;
+	//print("F: " + FString::SanitizeFloat(Value));
+}
+
+
+void APlayerCharacter::MoveRight(float Value)
+{
+	RightValue = Value;
+	//print("R: " + FString::SanitizeFloat(Value));
+}
+
+
+

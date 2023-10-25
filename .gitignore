@@ -74,8 +74,29 @@ Plugins/*/Intermediate/*
 DerivedDataCache/*
 
 #Large files
-Content/ParagonGrux/*
-Content/ParagonSerath/*
+#Content/ParagonGrux/*
+#Content/ParagonSerath/*
 Content/StarterContent/*
-!Content/ParagonSerath/Characters/Heroes/Serath/Animations/*
-!Content/ParagonGrux/Characters/Heroes/Grux/Animations/*
+
+Content/ParagonSerath/FX/*
+Content/ParagonSerath/Characters/Global/*
+Content/ParagonSerath/Characters/Maps/*
+Content/ParagonSerath/Characters/Heroes/Serath/Materials/*
+Content/ParagonSerath/Characters/Heroes/Serath/Meshes/*
+Content/ParagonSerath/Characters/Heroes/Serath/Skins/*
+Content/ParagonSerath/Characters/Heroes/Serath/Sounds/*
+Content/ParagonSerath/Characters/Heroes/Serath/Textures/*
+Content/ParagonSerath/Characters/Heroes/Serath/AnimationTestMap.umap
+
+Content/ParagonGrux/FX/*
+Content/ParagonGrux/Characters/Global/*
+Content/ParagonGrux/Characters/Maps/*
+Content/ParagonGrux/Characters/Heroes/Grux/Materials/*
+Content/ParagonGrux/Characters/Heroes/Grux/Meshes/*
+Content/ParagonGrux/Characters/Heroes/Grux/Skins/*
+Content/ParagonGrux/Characters/Heroes/Grux/Sounds/*
+Content/ParagonGrux/Characters/Heroes/Grux/Textures/*
+Content/ParagonGrux/Characters/Heroes/Grux/AnimationTestMap.umap
+
+#!Content/ParagonSerath/Characters/Heroes/Serath/Animations/*
+#!Content/ParagonGrux/Characters/Heroes/Grux/Animations/*

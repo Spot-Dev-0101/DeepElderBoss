@@ -9,6 +9,7 @@
 #include "PlayerAnimInstance.h"
 #include "Kismet/KismetMathLibrary.h"
 #include "Math/UnrealMathUtility.h" 
+#include "Components/BoxComponent.h"
 #include "PlayerCharacter.generated.h"
 
 UCLASS()
@@ -40,6 +41,10 @@ public:
 	UPROPERTY(VisibleAnywhere)
 	USpringArmComponent* arm;
 
+	UPROPERTY(VisibleAnywhere)
+	UBoxComponent* AttackCollider;
+
+
 	virtual void MoveCamera();
 	virtual void MouseX(float Value);
 	virtual void MouseY(float Value);
@@ -68,5 +73,8 @@ public:
 	float AttackTimer = 0;
 	bool LeftAttack;
 	bool RightAttack;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	bool HitEnemy;
 
 };

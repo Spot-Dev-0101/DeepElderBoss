@@ -34,6 +34,10 @@ APlayerCharacter::APlayerCharacter()
 
 	cam->AttachToComponent(arm, FAttachmentTransformRules::SnapToTargetNotIncludingScale, USpringArmComponent::SocketName);
 
+	AttackCollider = CreateDefaultSubobject<UBoxComponent>(TEXT("AttackCollider"));
+	AttackCollider->AttachToComponent(GetMesh(), FAttachmentTransformRules::SnapToTargetNotIncludingScale, TEXT("Mace_head"));
+
+
 }
 
 
@@ -99,6 +103,20 @@ void APlayerCharacter::Tick(float DeltaTime)
 
 	if (PlayerAnim->PerformedAttack == true) {
 		print("Perform Attack");
+
+		TArray<AActor*> Result;
+
+		AttackCollider->GetOverlappingActors(Result);
+
+
+		for (AActor* OverlappedActor : Result) {
+			if (OverlappedActor->GetName().Contains("BP_Enemy")) {
+				HitEnemy = true;
+				print("Hit Enemy");
+			}
+			
+		}
+
 		PlayerAnim->PerformedAttack = false;
 	}
 

@@ -125,6 +125,10 @@ void APlayerCharacter::Tick(float DeltaTime)
 		PlayerAnim->PerformedRightAttack = false;
 	}
 
+	if (PlacedFootPrintThisFrame == true) {
+		PlacedFootPrintThisFrame = false;
+	}
+	
 }
 
 void APlayerCharacter::Move()
@@ -199,6 +203,43 @@ void APlayerCharacter::MouseRightAttack()
 		RightAttack = true;
 	}
 	AttackTimer = AttackCooldown;
+}
+
+void APlayerCharacter::LeftPlant()
+{
+	if(PlacedFootPrintThisFrame == false) {
+		print("LeftPlant");
+		SpawnFootPrintDecal("Foot_L");
+	}
+}
+
+void APlayerCharacter::RightPlant()
+{
+	if (PlacedFootPrintThisFrame == false) {
+		print("RightPlant");
+		SpawnFootPrintDecal("Foot_R");
+	}
+	
+}
+
+void APlayerCharacter::SpawnFootPrintDecal(FName SocketName)
+{
+
+	ADecalActor* decal = GetWorld()->SpawnActor<ADecalActor>(GetMesh()->GetSocketLocation(SocketName), FRotator());
+	if (decal)
+	{
+		decal->SetDecalMaterial(FootStepDecalMaterial);
+		//decal->SetActorRotation(GetMesh()->GetComponentRotation() + FRotator(-90, -75, 0));
+		decal->SetActorRotation(GetMesh()->GetSocketRotation(SocketName) + FRotator(-90, -160, 0));
+		decal->SetActorScale3D(FVector(0.05, 0.05, 0.05));
+		//decal->SetLifeSpan(2.0f);
+		PlacedFootPrintThisFrame = true;
+	}
+	else
+	{
+		UE_LOG(LogTemp, Warning, TEXT("No decal spawned"));
+	}
+
 }
 
 

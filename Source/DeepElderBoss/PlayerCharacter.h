@@ -10,6 +10,8 @@
 #include "Kismet/KismetMathLibrary.h"
 #include "Math/UnrealMathUtility.h" 
 #include "Components/BoxComponent.h"
+#include "Engine/DecalActor.h" 
+#include "Materials/MaterialInstance.h" 
 #include "PlayerCharacter.generated.h"
 
 UCLASS()
@@ -76,5 +78,18 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	bool HitEnemy;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UMaterialInstance* FootStepDecalMaterial;
+
+	UFUNCTION(BlueprintCallable)
+	void LeftPlant();
+
+	UFUNCTION(BlueprintCallable)
+	void RightPlant();
+
+	void SpawnFootPrintDecal(FName SocketName);
+
+	bool PlacedFootPrintThisFrame = false;
 
 };

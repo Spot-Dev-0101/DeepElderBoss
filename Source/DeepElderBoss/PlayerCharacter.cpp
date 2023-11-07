@@ -232,6 +232,7 @@ void APlayerCharacter::SpawnFootPrintDecal(FName SocketName)
 		//decal->SetActorRotation(GetMesh()->GetComponentRotation() + FRotator(-90, -75, 0));
 		decal->SetActorRotation(GetMesh()->GetSocketRotation(SocketName) + FRotator(-90, -160, 0));
 		decal->SetActorScale3D(FVector(0.05, 0.05, 0.05));
+		
 		//decal->SetLifeSpan(2.0f);
 		PlacedFootPrintThisFrame = true;
 	}

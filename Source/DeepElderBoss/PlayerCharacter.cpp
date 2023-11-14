@@ -20,7 +20,10 @@ APlayerCharacter::APlayerCharacter()
 	//Create Axis point for the camera are to enable horizontal movement
 	armAxisPoint = CreateDefaultSubobject<USceneComponent>(TEXT("SpringAxisPoint"));
 
-	armAxisPoint->AttachToComponent(RootComponent, FAttachmentTransformRules::SnapToTargetNotIncludingScale);
+	//armAxisPoint->AttachToComponent(RootComponent, FAttachmentTransformRules::SnapToTargetNotIncludingScale);
+	armAxisPoint->AttachToComponent(GetMesh(), FAttachmentTransformRules::SnapToTargetNotIncludingScale, TEXT("Pelvis"));
+
+	armAxisPoint->SetWorldRotation(FRotator(0, 90, 0));
 
 	
 
@@ -54,8 +57,9 @@ void APlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCom
 	//PlayerInputComponent->BindAxis(TEXT("Move_Left"), this, &APlayerCharacter::MoveRight);
 	PlayerInputComponent->BindAxis(TEXT("Move_Right"), this, &APlayerCharacter::MoveRight);
 
+	PlayerInputComponent->BindAxis(TEXT("MouseRight"), this, &APlayerCharacter::MouseRight);
+
 	PlayerInputComponent->BindAction(TEXT("MouseAttack"), EInputEvent::IE_Pressed, this, &APlayerCharacter::MouseAttack);
-	PlayerInputComponent->BindAction(TEXT("MouseRightAttack"), EInputEvent::IE_Pressed, this, &APlayerCharacter::MouseRightAttack);
 
 }
 
@@ -196,13 +200,31 @@ void APlayerCharacter::MouseAttack()
 	AttackTimer = AttackCooldown;
 }
 
-void APlayerCharacter::MouseRightAttack()
+void APlayerCharacter::MouseRight(float value)
 {
-	print("Attack Right");
-	if (AttackTimer <= 0) {
-		RightAttack = true;
+	if (value > 0) {
+		PlayerAnim->HoverHold = true;
+		PlayerAnim->Hover = true;
+		FVector EndLocation = GetActorLocation() + FVector(0, 0, HoverHeight) + FVector(0, 0, -90);
+		FVector NewLocation = FMath::Lerp(GetMesh()->GetComponentLocation(), EndLocation, 0.03);
+		GetMesh()->SetWorldLocation(NewLocation);
+
+
+		float TargetCameraOffset = CameraOffsetHover;
+		float NewCameraOffset = FMath::Lerp(CameraOffset, TargetCameraOffset, 0.03);
+		CameraOffset = NewCameraOffset;
 	}
-	AttackTimer = AttackCooldown;
+	else {
+		PlayerAnim->HoverHold = false;
+		FVector EndLocation = GetActorLocation() + FVector(0, 0, -90);
+		FVector NewLocation = FMath::Lerp(GetMesh()->GetComponentLocation(), EndLocation, 0.075);
+		GetMesh()->SetWorldLocation(NewLocation);
+
+
+		float TargetCameraOffset = CameraOffsetGround;
+		float NewCameraOffset = FMath::Lerp(CameraOffset, TargetCameraOffset, 0.075);
+		CameraOffset = NewCameraOffset;
+	}
 }
 
 void APlayerCharacter::LeftPlant()
@@ -257,6 +279,8 @@ void APlayerCharacter::MoveCamera()
 	float tempX = armAxisPoint->GetRelativeRotation().Yaw + MouseXValue;
 	armAxisPoint->AddLocalRotation(FRotator(0, MouseXValue, 0));
 	//AddActorWorldRotation(FRotator(0, MouseXValue, 0));
+
+	armAxisPoint->SetWorldLocation(GetMesh()->GetComponentLocation() + FVector(0, 0, 80));
 
 }
 

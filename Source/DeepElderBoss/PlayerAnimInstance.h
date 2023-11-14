@@ -28,8 +28,15 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	bool PerformedAttack;
 
+	//Keeping this here incase it breaks something
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	bool PerformedRightAttack;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	bool Hover;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	bool HoverHold;
 
 	
 };

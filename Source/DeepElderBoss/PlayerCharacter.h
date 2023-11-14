@@ -69,12 +69,21 @@ public:
 	FVector LastMovingDir;
 
 	virtual void MouseAttack();
-	virtual void MouseRightAttack();
+	virtual void MouseRight(float value);
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	float AttackCooldown = 1;
 	float AttackTimer = 0;
 	bool LeftAttack;
 	bool RightAttack;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	float HoverHeight = 160;
+
+	float CameraOffsetGround = 90;
+	float CameraOffsetHover = 60;
+
+	float CameraOffset = 90;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	bool HitEnemy;

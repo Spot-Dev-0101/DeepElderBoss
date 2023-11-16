@@ -79,7 +79,10 @@ void APlayerCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
-	Move();
+	if (CanMove == true) {
+		Move();
+	}
+	
 	MoveCamera();
 
 	//PlayerAnim->Velocity = GetVelocity();

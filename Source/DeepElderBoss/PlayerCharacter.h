@@ -101,4 +101,7 @@ public:
 
 	bool PlacedFootPrintThisFrame = false;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	bool CanMove = true;
+
 };

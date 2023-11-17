@@ -73,6 +73,11 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	float AttackCooldown = 1;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	float HoverAttackCooldown = 5;
+
+
 	float AttackTimer = 0;
 	bool LeftAttack;
 	bool RightAttack;

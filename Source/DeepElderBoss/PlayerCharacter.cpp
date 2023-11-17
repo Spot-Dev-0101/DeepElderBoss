@@ -200,7 +200,13 @@ void APlayerCharacter::MouseAttack()
 	if (AttackTimer <= 0) {
 		LeftAttack = true;
 	}
-	AttackTimer = AttackCooldown;
+	if (PlayerAnim->Hover == true) {
+		AttackTimer = HoverAttackCooldown;
+	}
+	else {
+		AttackTimer = AttackCooldown;
+	}
+	
 }
 
 void APlayerCharacter::MouseRight(float value)

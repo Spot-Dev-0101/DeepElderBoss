@@ -111,17 +111,29 @@ void APlayerCharacter::Tick(float DeltaTime)
 	if (PlayerAnim->PerformedAttack == true) {
 		print("Perform Attack");
 
-		TArray<AActor*> Result;
+		print(FString::SanitizeFloat(FVector::Dist(GetActorLocation(), EnemyActor->GetActorLocation())));
 
-		AttackCollider->GetOverlappingActors(Result);
-
-
-		for (AActor* OverlappedActor : Result) {
-			if (OverlappedActor->GetName().Contains("BP_Enemy")) {
+		if (PlayerAnim->Hover == true) {
+			if (FVector::Dist(GetActorLocation(), EnemyActor->GetActorLocation()) < 1000) {
+				print("Enemy Close Enough");
 				HitEnemy = true;
 				print("Hit Enemy");
 			}
-			
+		}
+		else {
+
+			TArray<AActor*> Result;
+
+			AttackCollider->GetOverlappingActors(Result);
+
+
+			for (AActor* OverlappedActor : Result) {
+				if (OverlappedActor->GetName().Contains("BP_Enemy")) {
+					HitEnemy = true;
+					print("Hit Enemy");
+				}
+
+			}
 		}
 
 		PlayerAnim->PerformedAttack = false;
@@ -199,13 +211,14 @@ void APlayerCharacter::MouseAttack()
 	print("Attack Left");
 	if (AttackTimer <= 0) {
 		LeftAttack = true;
+		if (PlayerAnim->Hover == true) {
+			AttackTimer = HoverAttackCooldown;
+		}
+		else {
+			AttackTimer = AttackCooldown;
+		}
 	}
-	if (PlayerAnim->Hover == true) {
-		AttackTimer = HoverAttackCooldown;
-	}
-	else {
-		AttackTimer = AttackCooldown;
-	}
+	
 	
 }
 

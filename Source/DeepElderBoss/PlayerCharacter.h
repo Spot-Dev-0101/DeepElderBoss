@@ -72,10 +72,10 @@ public:
 	virtual void MouseRight(float value);
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	float AttackCooldown = 1;
+	float AttackCooldown = 0.3;
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	float HoverAttackCooldown = 5;
+	float HoverAttackCooldown = 2;
 
 
 	float AttackTimer = 0;
@@ -109,4 +109,7 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	bool CanMove = true;
 
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	AActor* EnemyActor;
 };

@@ -195,6 +195,14 @@ void APlayerCharacter::Move()
 	//GetMesh()->SetWorldRotation(NewFacingRotator);
 	FRotator NewRotation = (-RightMoveDirection).Rotation();
 	FRotator NewRotationLerped = FMath::Lerp(GetMesh()->GetComponentRotation(), NewRotation, 0.1);
+
+	if (PlayerAnim->HoverHold == true) {
+		//print(PlayerAnim->Velocity.ToString());
+		NewRotationLerped.Roll = PlayerAnim->Velocity.Y/100;
+		NewRotationLerped.Pitch = PlayerAnim->Velocity.X / 25;
+		//print(NewRotationLerped.ToString());
+	}
+
 	GetMesh()->SetWorldRotation(NewRotationLerped);
 
 	LastLocation = GetActorLocation();
@@ -230,6 +238,11 @@ void APlayerCharacter::MouseRight(float value)
 		FVector EndLocation = GetActorLocation() + FVector(0, 0, HoverHeight) + FVector(0, 0, -90);
 		FVector NewLocation = FMath::Lerp(GetMesh()->GetComponentLocation(), EndLocation, 0.03);
 		GetMesh()->SetWorldLocation(NewLocation);
+
+		if (FVector::Dist(GetMesh()->GetComponentLocation(), EndLocation) < 10) {
+			//print("At Top");
+			//Disable attacking until at the top
+		}
 
 
 		float TargetCameraOffset = CameraOffsetHover;

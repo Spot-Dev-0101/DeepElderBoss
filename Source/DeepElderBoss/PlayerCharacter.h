@@ -40,10 +40,10 @@ public:
 	UPROPERTY()
 	USceneComponent* armAxisPoint;
 
-	UPROPERTY(VisibleAnywhere)
+	UPROPERTY(VisibleAnywhere, Category="1. Player Settings")
 	USpringArmComponent* arm;
 
-	UPROPERTY(VisibleAnywhere)
+	UPROPERTY(VisibleAnywhere, Category = "1. Player Settings")
 	UBoxComponent* AttackCollider;
 
 
@@ -71,10 +71,10 @@ public:
 	virtual void MouseAttack();
 	virtual void MouseRight(float value);
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "1. Player Settings")
 	float AttackCooldown = 0.3;
 	
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "1. Player Settings")
 	float HoverAttackCooldown = 2;
 
 
@@ -82,18 +82,21 @@ public:
 	bool LeftAttack;
 	bool RightAttack;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "1. Player Settings")
 	float HoverHeight = 160;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "1. Player Settings")
+	float HoverMovementMax = 6;
 
 	float CameraOffsetGround = 90;
 	float CameraOffsetHover = 60;
 
 	float CameraOffset = 90;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "1. Player Settings")
 	bool HitEnemy;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "1. Player Settings")
 	UMaterialInstance* FootStepDecalMaterial;
 
 	UFUNCTION(BlueprintCallable)
@@ -106,10 +109,10 @@ public:
 
 	bool PlacedFootPrintThisFrame = false;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "1. Player Settings")
 	bool CanMove = true;
 
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "1. Player Settings")
 	AActor* EnemyActor;
 };

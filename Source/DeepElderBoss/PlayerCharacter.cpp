@@ -200,6 +200,19 @@ void APlayerCharacter::Move()
 		//print(PlayerAnim->Velocity.ToString());
 		NewRotationLerped.Roll = PlayerAnim->Velocity.Y/100;
 		NewRotationLerped.Pitch = PlayerAnim->Velocity.X / 25;
+
+		if (NewRotationLerped.Roll > HoverMovementMax) {
+			NewRotationLerped.Roll = HoverMovementMax;
+		}
+		if (NewRotationLerped.Roll < -HoverMovementMax) {
+			NewRotationLerped.Roll = -HoverMovementMax;
+		}
+		if (NewRotationLerped.Pitch > HoverMovementMax) {
+			NewRotationLerped.Pitch = HoverMovementMax;
+		}
+		if (NewRotationLerped.Pitch < -HoverMovementMax) {
+			NewRotationLerped.Pitch = -HoverMovementMax;
+		}
 		//print(NewRotationLerped.ToString());
 	}
 
